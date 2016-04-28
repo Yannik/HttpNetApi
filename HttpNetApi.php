@@ -17,7 +17,7 @@ class HttpNetApi
         $this->apikey = $apikey;
     }
 
-    public function zoneUpdate($zoneConfig, $recordsToAdd, $recordsToDelete)
+    public function zoneUpdate($zoneConfig, $recordsToAdd, $recordsToDelete = [])
     {
         $updateRecords = new \stdClass();
         $updateRecords->zoneConfig = $zoneConfig;
