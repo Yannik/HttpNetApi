@@ -20,14 +20,10 @@ class HttpNetApi
     public function zoneUpdate($zoneConfig, $recordsToAdd, $recordsToDelete)
     {
         $updateRecords = new \stdClass();
-        $updateRecords->authToken = $this->apikey;
         $updateRecords->zoneConfig = $zoneConfig;
         $updateRecords->recordsToAdd = $recordsToAdd;
         $updateRecords->recordsToDelete = $recordsToDelete;
-var_dump($updateRecords);
-        $response = $this->guzzle->request('POST', 'zoneUpdate', [
-            'body' => json_encode($updateRecords)
-        ]);
+        $response = $this->request($updateRecords, 'zoneUpdate');
 
         return json_decode($response->getBody());
 
@@ -41,21 +37,42 @@ var_dump($updateRecords);
         foreach ($additions as $additionKey => $additionValue) {
             $original->{$additionKey} = $additionValue;
         }
-        
+
         return $original;
+    }
+
+    public function request($requestObject, $path)
+    {
+        $requestObject->authToken = $this->apikey;
+        return $this->guzzle->request('POST', $path, [
+            'body' => json_encode($requestObject)
+        ]);
     }
 
     public function recordsFindRaw($options)
     {
         $requestObject = new \stdClass();
-        $requestObject->authToken = $this->apikey;
         $requestObject = $this->mergeObjects($requestObject, $options);
-        $response = $this->guzzle->request('POST', 'recordsFind', [
-            'body' => json_encode($requestObject)
-        ]);
-
+        $response = $this->request($requestObject, 'recordsFind');
         return json_decode($response->getBody());
 
+    }
+
+    /*
+     * Use like
+     $options->filter = [ 'field' => "ZoneName", 'value' => 'sembritzki.me' ];
+     $options->filter = [ 'subFilterConnective' => 'OR',
+                     'subFilter' => [
+                         [ 'field' => "ZoneName", 'value' => 'sembritzki.me' ],
+                         [ 'field' => "ZoneName", 'value' => '*.sembritzki.me' ]
+                     ]];
+
+     */
+    public function zonesFindRaw($options)
+    {
+        $requestObject = new \stdclass();
+        $requestObject = $this->mergeObjects($requestObject, $options);
+        return json_decode($this->request($requestObject, 'zonesFind')->getBody());
     }
 
     public function recordsFindByHostname($host)
