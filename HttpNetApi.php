@@ -35,7 +35,7 @@ class HttpNetApi
         $updateRecords->recordsToDelete = $recordsToDelete;
         $response = $this->request($updateRecords, 'zoneUpdate');
 
-        return json_decode($response->getBody());
+        return $response;
 
     }
 
@@ -54,9 +54,19 @@ class HttpNetApi
     public function request($requestObject, $path)
     {
         $requestObject->authToken = $this->apikey;
-        return $this->guzzle->request('POST', $path, [
+        $response = $this->guzzle->request('POST', $path, [
             'body' => json_encode($requestObject)
         ]);
+        $response = json_decode($response->getBody());
+        $this->validateResponse($response);
+        return $response;
+    }
+
+    protected function validateResponse($response)
+    {
+        if ($response->status == "error") {
+            throw new ApiErrorException($response->errors[0]->text);
+        }
     }
 
     public function recordsFindRaw($options)
@@ -64,7 +74,7 @@ class HttpNetApi
         $requestObject = new \stdClass();
         $requestObject = $this->mergeObjects($requestObject, $options);
         $response = $this->request($requestObject, 'recordsFind');
-        return json_decode($response->getBody());
+        return $response;
 
     }
 
@@ -82,7 +92,7 @@ class HttpNetApi
     {
         $requestObject = new \stdclass();
         $requestObject = $this->mergeObjects($requestObject, $options);
-        return json_decode($this->request($requestObject, 'zonesFind')->getBody());
+        return $this->request($requestObject, 'zonesFind');
     }
 
     public function recordsFindByHostname($host)
