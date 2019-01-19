@@ -95,6 +95,15 @@ class HttpNetApi
         return $this->request($requestObject, 'zonesFind');
     }
 
+    public function zonesFindByName($name)
+    {
+        $options = new \stdClass();
+        $options->filter = [ 'field' => "zoneName", 'value' => $name ];
+        $options->limit = PHP_INT_MAX;
+
+        return $this->zonesFindRaw($options);
+    }
+
     public function recordsFindByHostname($host)
     {
         $options = new \stdClass();
