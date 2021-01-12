@@ -12,7 +12,7 @@ class HttpNetApi
 
     public function __construct($apikey)
     {
-        $this->guzzle = new \GuzzleHttp\Client(['base_uri' => 'https://partner.http.net/api/dns/v1/json/']);
+        $this->guzzle = new \GuzzleHttp\Client(['base_uri' => 'https://secure.hosting.de/api/dns/v1/json/']);
 
         $this->apikey = $apikey;
     }
