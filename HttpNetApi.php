@@ -112,4 +112,25 @@ class HttpNetApi
 
         return $this->recordsFindRaw($options);
     }
+
+    public function createZoneFromTemplate($zoneName, $templateId, $templateReplacements = null, $useDefaultNameserver = true, $records = [], $tieToTemplate = true) {
+        // new keyword for default argument value is only possible in php >= 8.1
+        $templateReplacements ??= new \stdclass();
+
+        $requestObject = new \stdclass();
+        $requestObject->useDefaultNameserverSet = $useDefaultNameserver;
+        $requestObject->records = $records;
+
+        $zoneConfig = new \stdClass();
+        $zoneConfig->name = $zoneName;
+        $zoneConfig->type = "NATIVE";
+        $zoneConfig->templateValues = [
+                "templateId" => $templateId,
+                "templateReplacements" => $templateReplacements,
+                "tieToTemplate" => $tieToTemplate
+        ];
+        $requestObject->zoneConfig = $zoneConfig;
+
+        return $this->request($requestObject, 'zoneCreate');
+    }
 }
