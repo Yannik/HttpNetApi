@@ -1,5 +1,5 @@
 {
-  "name": "Yannik/HttpNetApi",
+  "name": "yannik/httpnet-api",
   "require": {
     "guzzlehttp/guzzle": "^6.1"
   },
