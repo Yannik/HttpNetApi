@@ -133,4 +133,11 @@ class HttpNetApi
 
         return $this->request($requestObject, 'zoneCreate');
     }
+
+    public function zoneDeleteByName($zoneName){
+    	$requestObject = new \stdclass();
+    	$requestObject->zoneName = $zoneName;
+
+    	return $this->request($requestObject, 'zoneDelete');
+    }
 }
